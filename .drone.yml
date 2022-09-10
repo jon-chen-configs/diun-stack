@@ -1,0 +1,19 @@
+kind: pipeline
+name: default
+type: docker
+
+steps:
+  - name: deploy
+    image: codestation/drone-stack
+    settings:
+      host:
+        from_secret: swarm_host
+      stack_name: diun-swarm
+      compose: diun-swarm.yml
+      tlsverify: true
+      docker_cert:
+        from_secret: swarm_cert
+      docker_key:
+        from_secret: swarm_key
+      docker_cacert:
+        from_secret: swarm_cacert
