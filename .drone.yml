@@ -1,9 +1,10 @@
 kind: pipeline
-name: debug
-type: exec
+name: default
+type: docker
 
 steps:
-- name: print variables
+- name: debug print variables
+  image: alpine
   commands:
   - echo "host $host"
   - echo "docker_cert $docker_cert"
@@ -19,12 +20,6 @@ steps:
     docker_cacert:
       from_secret: swarm_cacert
 
----
-kind: pipeline
-name: default
-type: docker
-
-steps:
 - name: deploy
   image: codestation/drone-stack
   settings:
