@@ -6,12 +6,12 @@ steps:
 - name: debug print variables
   image: alpine
   commands:
-  - echo "host $host"
+  - echo "host $swarm_host"
   - echo "docker_cert $docker_cert"
   - echo "docker_key $docker_key"
   - echo "docker_cacert $docker_cacert"
   environment:
-    host:
+    swarm_host:
       from_secret: swarm_host
     docker_cert:
       from_secret: swarm_cert
