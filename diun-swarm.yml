@@ -1,0 +1,36 @@
+version: "3.7"
+services:
+  diun:
+    image: crazymax/diun:latest
+    command: serve
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      placement:
+        constraints: [node.platform.architecture != aarch64]
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "diun_data:/data"
+    environment:
+      - "PUID=${NET_PUID}"
+      - "PGID=${NET_PGID}"
+      - "TZ=${TZ}"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+      - "DIUN_WATCH_WORKERS=20"
+      - "DIUN_WATCH_SCHEDULE=0 0 * * *"
+      - "DIUN_PROVIDERS_SWARM=true"
+      - "DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT=true"
+      - "DIUN_NOTIF_MQTT_HOST=${MQTT_HOST}"
+      - "DIUN_NOTIF_MQTT_USERNAME=${MQTT_USERNAME}"
+      - "DIUN_NOTIF_MQTT_PASSWORD=${MQTT_PASSWORD}"
+      - "DIUN_NOTIF_MQTT_CLIENT=diun"
+      - "DIUN_NOTIF_MQTT_TOPIC=docker/diun"
+
+volumes:
+  diun_data:
+    driver_opts:
+      type: nfs
+      o: addr=avengershq.cynicsoft.net,nolock,noresvport,vers=2
+      device: :${DATADIR}/docker-stack/diun
