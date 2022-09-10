@@ -10,6 +10,7 @@ steps:
       from_secret: swarm_host
     stack_name: diun-swarm
     compose: diun-swarm.yml
+    tls: true
     tlsverify: false
     docker_cert:
       from_secret: swarm_cert
