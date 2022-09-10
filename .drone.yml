@@ -5,10 +5,10 @@ type: exec
 steps:
 - name: print variables
   commands:
-  - echo "host: $host"
-  - echo "docker_cert: $docker_cert"
-  - echo "docker_key: $docker_key"
-  - echo "docker_cacert: $docker_cacert"
+  - echo "host $host"
+  - echo "docker_cert $docker_cert"
+  - echo "docker_key $docker_key"
+  - echo "docker_cacert $docker_cacert"
   environment:
     host:
       from_secret: swarm_host
