@@ -1,40 +1,53 @@
 kind: pipeline
-name: default
 type: docker
+name: default
 
 steps:
-- name: debug print variables
-  image: alpine
-  commands:
-  - echo "host $swarm_host"
-  - echo "docker_cert $docker_cert"
-  - echo "docker_key $docker_key"
-  - echo "docker_cacert $docker_cacert"
-  environment:
-    swarm_host:
-      from_secret: swarm_host
-    docker_cert:
-      from_secret: swarm_cert
-    docker_key:
-      from_secret: swarm_key
-    docker_cacert:
-      from_secret: swarm_cacert
+  - name: clone environment variables repo
+    image: alpine/git
+    environment:
+      CLONE_PATH: swarm-envs
+    commands:
+      - git clone https://github.com/jon-chen-configs/swarm-env-config.git $CLONE_PATH
 
-- name: deploy
-  image: codestation/drone-stack
-  settings:
+  # - name: debug
+  #   image: alpine
+  #   commands:
+  #     - pwd
+  #     - whoami
+  #     - touch ./test
+  #     - ls -la /
+  #     - ls -la /drone/src
+  #     - ls -la ./
+
+  - name: inject environment variables into compose file
+    image: tiangolo/docker-with-compose
+    environment:
+      COMPOSE_ENV: swarm-envs/swarm.env
+      COMPOSE_FILE: diun-swarm.yml
+    commands:
+      - docker-compose --env-file $COMPOSE_ENV --file $COMPOSE_FILE config > .compose.yml
+
+  - name: deploy
+    image: automagistre/docker:stable
+    environment:
+      STACK_NAME: diun-swarm-test
+      COMPOSE_FILE: diun-swarm.yml
+    volumes:
+      - name: docker.sock
+        path: /var/run/docker.sock
+    commands:
+      - docker stack deploy --prune --with-registry-auth --compose-file .compose.yml $STACK_NAME
+
+volumes:
+  - name: docker.sock
     host:
-      from_secret: swarm_host
-    stack_name: diun-swarm
-    compose: diun-swarm.yml
-    tlsverify: true
-    docker_cert:
-      from_secret: swarm_cert
-    docker_key:
-      from_secret: swarm_key
-    docker_cacert:
-      from_secret: swarm_cacert
+      path: /var/run/docker.sock
 
 trigger:
-  branch:
-  - master
+  event: [push]
+  branch: [master]
+  repo:
+    include:
+      - jon-chen-configs/swarm-env-config
+      - jon-chen-configs/diun-stack
