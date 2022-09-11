@@ -10,16 +10,6 @@ steps:
     commands:
       - git clone https://github.com/jon-chen-configs/swarm-env-config.git $CLONE_PATH
 
-  # - name: debug
-  #   image: alpine
-  #   commands:
-  #     - pwd
-  #     - whoami
-  #     - touch ./test
-  #     - ls -la /
-  #     - ls -la /drone/src
-  #     - ls -la ./
-
   - name: inject environment variables into compose file
     image: tiangolo/docker-with-compose
     environment:

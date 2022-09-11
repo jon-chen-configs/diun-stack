@@ -8,13 +8,19 @@ services:
       restart_policy:
         condition: on-failure
       placement:
-        constraints: [node.platform.architecture != aarch64]
+        # Docker (20.10.3) on Synology bug where env vars from env_file 
+        # not set on container.
+        # constraints: [node.platform.arch != aarch64]
+        constraints:
+          - node.platform.arch != aarch64
+          - node.hostname != ${NAS_HOSTNAME}
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "diun_data:/data"
+    env_file: ["${ENV_DIR:-swarm-envs}/swarm/diun-stack/diun.env"]
     environment:
-      - "PUID=${NET_PUID}"
-      - "PGID=${NET_PGID}"
+      # - "PUID=${NET_PUID}"
+      # - "PGID=${NET_PGID}"
       - "TZ=${TZ}"
       - "LOG_LEVEL=info"
       - "LOG_JSON=false"
@@ -22,15 +28,10 @@ services:
       - "DIUN_WATCH_SCHEDULE=0 0 * * *"
       - "DIUN_PROVIDERS_SWARM=true"
       - "DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT=true"
-      - "DIUN_NOTIF_MQTT_HOST=${MQTT_HOST}"
-      - "DIUN_NOTIF_MQTT_USERNAME=${MQTT_USERNAME}"
-      - "DIUN_NOTIF_MQTT_PASSWORD=${MQTT_PASSWORD}"
-      - "DIUN_NOTIF_MQTT_CLIENT=diun"
-      - "DIUN_NOTIF_MQTT_TOPIC=docker/diun"
 
 volumes:
   diun_data:
     driver_opts:
       type: nfs
-      o: addr=avengershq.cynicsoft.net,nolock,noresvport,vers=2
+      o: addr=${NAS_HOST},nolock,noresvport,vers=2
       device: :${DATADIR}/docker-stack/diun
