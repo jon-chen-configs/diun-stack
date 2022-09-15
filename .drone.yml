@@ -33,7 +33,7 @@ steps:
   - name: deploy
     image: automagistre/docker:stable
     environment:
-      STACK_NAME: diun-swarm-test
+      STACK_NAME: diun-swarm
       COMPOSE_FILE: diun-swarm.yml
     volumes:
       - name: docker.sock
