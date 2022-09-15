@@ -10,13 +10,23 @@ steps:
     commands:
       - git clone https://github.com/jon-chen-configs/swarm-env-config.git $CLONE_PATH
 
-  - name: inject environment variables into compose file and validate
+  - name: validate config
     image: tiangolo/docker-with-compose
     environment:
       COMPOSE_ENV: swarm-envs/swarm.env
       COMPOSE_FILE: diun-swarm.yml
     commands:
       - docker-compose --env-file $COMPOSE_ENV --file $COMPOSE_FILE config > .compose.yml
+
+  - name: auto-promote
+    image: drone/cli
+    environment:
+      DRONE_SERVER:
+        from_secret: drone_server
+      DRONE_TOKEN:
+        from_secret: drone_token
+    commands:
+      - drone build promote $GIT_REPO $DRONE_BUILD_NUMBER production
 
   - name: deploy
     image: automagistre/docker:stable
