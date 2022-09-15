@@ -26,7 +26,7 @@ steps:
       DRONE_TOKEN:
         from_secret: drone_token
     commands:
-      - drone build promote $GIT_REPO $DRONE_BUILD_NUMBER production
+      - drone build promote $DRONE_REPO $DRONE_BUILD_NUMBER production
 
   - name: deploy
     image: automagistre/docker:stable
