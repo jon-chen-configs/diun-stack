@@ -19,7 +19,7 @@ steps:
       - docker-compose --env-file $COMPOSE_ENV --file $COMPOSE_FILE config > .compose.yml
 
   - name: auto-promote
-    image: drone/cli
+    image: drone/cli:1.5-alpine
     environment:
       DRONE_SERVER:
         from_secret: drone_server
