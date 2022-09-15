@@ -54,4 +54,3 @@ trigger:
   repo:
     include:
       - jon-chen-configs/swarm-env-config
-      - jon-chen-configs/diun-stack
