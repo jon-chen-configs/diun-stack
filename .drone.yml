@@ -54,3 +54,4 @@ trigger:
   repo:
     include:
       - jon-chen-configs/swarm-env-config
+      - $DRONE_REPO
