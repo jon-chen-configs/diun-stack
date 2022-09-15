@@ -21,7 +21,7 @@ steps:
   - name: auto-promote
     image: drone/cli:1.5-alpine
     environment:
-      DRONE_SERVER: drone-server
+      DRONE_SERVER: http://drone-server
       DRONE_TOKEN:
         from_secret: drone_token
     commands:
