@@ -15,6 +15,7 @@ services:
           - node.platform.arch != aarch64
           - node.hostname != ${NAS_HOSTNAME}
     volumes:
+      - "/etc/ssl/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:ro"
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "diun_data:/data"
     env_file: ["${ENV_DIR:-swarm-envs}/swarm/diun-stack/diun.env"]
