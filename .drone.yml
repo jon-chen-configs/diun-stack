@@ -1,5 +1,5 @@
 kind: pipeline
-name: default
+name: build
 
 steps:
   - name: clone environment variables repo
@@ -29,7 +29,16 @@ steps:
       event: 
         exclude: [promote]
 
-  - name: deploy
+trigger:
+  event: [push, custom, promote]
+  branch: [master]
+
+---
+kind: pipeline
+name: deploy
+
+steps:
+  - name: deploy to swarm
     image: automagistre/docker:stable
     environment:
       STACK_NAME: diun-swarm
